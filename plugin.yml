@@ -1,0 +1,12 @@
+name: GameEventPlugin
+version: 1.0
+api: 3.0.1
+author: HmmHmmmmm
+main: hmmhmmmm\gameevent\GameEvent
+
+permissions:
+    gameevent.command:
+        default: false
+        children:
+            gameevent.command.gameevent:
+                default: op
