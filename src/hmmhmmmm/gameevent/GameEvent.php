@@ -44,7 +44,7 @@ class GameEvent extends PluginBase implements Listener{
    public function onLoad(){
       self::$instance = $this;
       if($this->getServer()->getPluginManager()->getPlugin("Slapper") === null){
-         $this->getLogger()->critical("§cกรุณาลงปลั๊กอิน Slapper");
+         $this->getLogger()->critical("§cปลั๊กนี้จะไม่ทำงาน กรุณาลงปลั๊กอิน Slapper");
          $this->getServer()->getPluginManager()->disablePlugin($this);
       }
    } 
