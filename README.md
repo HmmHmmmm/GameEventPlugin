@@ -32,9 +32,7 @@
 
 
 **Command**<br>
-```
-default: op
-```
+#default: op
 - /gameevent info : เครดิตผู้สร้างปลั๊กอิน
 - /gameevent create <ชื่อกิจกรรม> <เวลา> <ข้อความอธิบาย> <ข้อความรางวัล> : สร้างกิจกรรม
 - /gameevent list : ดูรายชื่อกิจกรรม
