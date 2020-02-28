@@ -1,12 +1,15 @@
 name: GameEventPlugin
-version: 1.0
-api: 3.0.1
+version: 3.1
+api: 3.11.0
 author: HmmHmmmmm
 main: hmmhmmmm\gameevent\GameEvent
+website: https://github.com/HmmHmmmm/GameEventPlugin
+depend:
+- Slapper
 
 permissions:
-    gameevent.command:
-        default: false
-        children:
-            gameevent.command.gameevent:
-                default: op
+  gameevent:
+    default: false
+    children:
+      gameevent.command:
+        default: op

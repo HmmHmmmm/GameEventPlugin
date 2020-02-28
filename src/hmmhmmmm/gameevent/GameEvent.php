@@ -2,74 +2,130 @@
 
 namespace hmmhmmmm\gameevent;
 
-use slapper\events\SlapperCreationEvent;
+use hmmhmmmm\gameevent\cmd\GameEventCommand;
+use hmmhmmmm\gameevent\data\Language;
+use hmmhmmmm\gameevent\listener\EventListener;
+use hmmhmmmm\gameevent\scheduler\GameEventTask;
+use hmmhmmmm\gameevent\scheduler\SlapperUpdateTask;
+use hmmhmmmm\gameevent\ui\Form;
+use xenialdan\customui\API as FromAPI;
+
 use pocketmine\Player;
 use pocketmine\block\Block;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\entity\Entity;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\plugin\PluginBase;
-use pocketmine\tile\Sign;
+use pocketmine\plugin\Plugin;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\DoubleTag;
-use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\tag\FloatTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\ShortTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat as TF;
 
-class GameEvent extends PluginBase implements Listener{
+class GameEvent extends PluginBase implements GameEventAPI{
+   /* @ GameEvent::class */
    private static $instance = null;
-   private $prefix = null;
+ 
+   private $prefix = "?";
+   private $facebook = "§cwithout";
+   private $youtube = "§cwithout";
+   private $discord = "§cwithout";
+  
+   /* @ Language::class */
+   private $language = null;
+   /* @ Config */
    private $data = null;
+   /* @ array[] */
    public $array = [];
-      
-   public $pluginInfo = [
-      "name" => "GameEvent",
-      "version" => 1.0,
-      "author" => "HmmHmmmm",
-      "description" => "ปลั๊กอินนี้ทำแจก โปรดอย่าเอาไปขาย *หากจะเอาไปแจกต่อโปรดให้เครดิตด้วย*",
-      "facebook" => "https://m.facebook.com/phonlakrit.knaongam.1",
-      "youtube" => "https://m.youtube.com/channel/UCtjvLXDxDAUt-8CXV1eWevA",
-      "github" => "https://github.com/HmmHmmmm"
+   /* @ Form::class */
+   private $form = null;
+   /* @ Plugin */
+   private $slapper = null;
+
+   private $langClass = [
+      "thai",
+      "english"
    ];
-   
-   public static function getInstance(){
+
+   public static function getInstance(): GameEvent{
       return self::$instance;
    }
-   public function onLoad(){
+   public function onLoad(): void{
       self::$instance = $this;
-      if($this->getServer()->getPluginManager()->getPlugin("Slapper") === null){
-         $this->getLogger()->critical("§cปลั๊กนี้จะไม่ทำงาน กรุณาลงปลั๊กอิน Slapper");
-         $this->getServer()->getPluginManager()->disablePlugin($this);
-      }
    } 
-   public function onEnable(){
-      foreach($this->pluginInfo as $key => $value){
-         $this->getServer()->getLogger()->notice($key." ".$value);
-      }
+   public function onEnable(): void{
       @mkdir($this->getDataFolder());
-      $this->data = new Config($this->getDataFolder()."gameevent.yml", Config::YAML); 
+      @mkdir($this->getDataFolder()."language/");
+      $this->saveDefaultConfig();
+      $this->data = new Config($this->getDataFolder()."gameevent.yml", Config::YAML, array());
+      $c = $this->data->getAll();
+      if(!isset($c["event"])){
+         $c["event"] = [];
+         $this->data->setAll($c);
+         $this->data->save();
+      } 
       $this->prefix = "GameEvent";
-      $this->getServer()->getPluginManager()->registerEvents($this, $this);
-      $this->getServer()->getScheduler()->scheduleRepeatingTask(new GameEventTask($this), 20);
-      $this->getServer()->getScheduler()->scheduleRepeatingTask(new SlapperUpdateTask($this), 20*3);
-      $cmd = [
-         new GameEventCommand($this)
-      ];
-      foreach($cmd as $command){
-         $this->getServer()->getCommandMap()->register($command->getName(), $command);
+      $this->facebook = "https://bit.ly/39ULjqk";
+      $this->youtube = "https://bit.ly/2HL1j28";
+      $this->discord = "https://discord.gg/n6CmNr";
+      $this->form = new Form($this);
+      $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+      $this->getScheduler()->scheduleRepeatingTask(new GameEventTask($this), 20);
+      $this->getScheduler()->scheduleRepeatingTask(new SlapperUpdateTask($this), 20*3);
+      $this->getServer()->getCommandMap()->register("GameEventPlugin", new GameEventCommand($this));
+      $langConfig = $this->getConfig()->getNested("language");
+      if(!in_array($langConfig, $this->langClass)){
+         $this->getLogger()->error("§cNot found language ".$langConfig.", Please try ".implode(", ", $this->langClass));
+         $this->getServer()->getPluginManager()->disablePlugin($this);
+         return;
+      }else{
+         $this->language = new Language($this, $langConfig);
+      }
+      if($this->getServer()->getPluginManager()->getPlugin("Slapper") === null){
+         $this->getLogger()->error($this->language->getTranslate("notfound.plugin", ["Slapper"]));
+         $this->getServer()->getPluginManager()->disablePlugin($this);
+         return;
+      }else{
+         $this->slapper = $this->getServer()->getPluginManager()->getPlugin("Slapper");
+      }
+      if(!class_exists(FromAPI::class)){
+         $this->getLogger()->error($this->language->getTranslate("notfound.libraries", ["customui"]));
+         $this->getServer()->getPluginManager()->disablePlugin($this);
+         return;
       }
    }
    public function getPrefix(): string{
       return "§e[§b".$this->prefix."§e]§f";
    }
-   public function getData(){
+   public function getFacebook(): string{
+      return $this->facebook;
+   }
+   public function getYoutube(): string{
+      return $this->youtube;
+   }
+   public function getDiscord(): string{
+      return $this->discord;
+   }
+   public function getLanguage(): Language{
+      return $this->language;
+   }
+   public function getData(): Config{
       return $this->data;
+   }
+   public function getForm(): Form{
+      return $this->form;
+   }
+   public function getPluginInfo(): string{
+      $author = implode(", ", $this->getDescription()->getAuthors());
+      $arrayText = [
+         $this->getPrefix()." ".$this->getLanguage()->getTranslate("plugininfo.name", [$this->getDescription()->getName()]),
+         $this->getPrefix()." ".$this->getLanguage()->getTranslate("plugininfo.version", [$this->getDescription()->getVersion()]),
+         $this->getPrefix()." ".$this->getLanguage()->getTranslate("plugininfo.author", [$author]),
+         $this->getPrefix()." ".$this->getLanguage()->getTranslate("plugininfo.description"),
+         $this->getPrefix()." ".$this->getLanguage()->getTranslate("plugininfo.facebook", [$this->getFacebook()]),
+         $this->getPrefix()." ".$this->getLanguage()->getTranslate("plugininfo.youtube", [$this->getYoutube()]),
+         $this->getPrefix()." ".$this->getLanguage()->getTranslate("plugininfo.website", [$this->getDescription()->getWebsite()]),
+         $this->getPrefix()." ".$this->getLanguage()->getTranslate("plugininfo.discord", [$this->getDiscord()]),
+      ];
+      return implode("\n", $arrayText);
    }
    public function sendTime(int $second): string{
       $time = $second;
@@ -82,10 +138,10 @@ class GameEvent extends PluginBase implements Listener{
       $seconds = floor($time);
       $time -= $seconds;    
       $ret_val = "";
-      $msgDay = "ว.";
-      $msgHours = "ชม.";
-      $msgMinutes = "น.";
-      $msgSeconds = "วิ.";
+      $msgDay = $this->getLanguage()->getTranslate("sendtime.msgday");
+      $msgHours = $this->getLanguage()->getTranslate("sendtime.msghours");
+      $msgMinutes = $this->getLanguage()->getTranslate("sendtime.msgminutes");
+      $msgSeconds = $this->getLanguage()->getTranslate("sendtime.msgseconds");
       if($days > 0){
          if($ret_val == ""){
             $ret_val = $days." ".$msgDay;
@@ -116,151 +172,56 @@ class GameEvent extends PluginBase implements Listener{
       }
       return $ret_val;
    }
-   private function makeSlapperNBT(string $type, Player $player, string $cmd): CompoundTag{
-      $nbt = new CompoundTag;
-      $nbt->Pos = new ListTag("Pos", [
-         new DoubleTag(0, $player->getX()),
-         new DoubleTag(1, $player->getY()),
-         new DoubleTag(2, $player->getZ())
-      ]);
-      $nbt->Motion = new ListTag("Motion", [
-         new DoubleTag(0, 0),
-         new DoubleTag(1, 0),
-         new DoubleTag(2, 0)
-      ]);
-      $nbt->Rotation = new ListTag("Rotation", [
-         new FloatTag(0, $player->getYaw()),
-         new FloatTag(1, $player->getPitch())
-      ]);
-      $nbt->Health = new ShortTag("Health", 1);
+   private function makeSlapperNBT(string $type, Player $player, string $name, string $cmd): CompoundTag{
+      $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
+      $nbt->setShort("Health", 1);
       $cmds = [new StringTag($cmd, $cmd)];
-      $nbt->Commands = new CompoundTag("Commands", $cmds);
-      $nbt->MenuName = new StringTag("MenuName", "");
-      $nbt->SlapperVersion = new StringTag("SlapperVersion", "1.3.4");
-      if($type === "Human"){
+      $nbt->setTag(new CompoundTag("Commands", $cmds));
+      $nbt->setString("MenuName", "");
+      $nbt->setString("CustomName", $name);
+      $nbt->setString("SlapperVersion", $this->getDescription()->getVersion());
+      if($type === "Human") {
          $player->saveNBT();
-         $nbt->Inventory = clone $player->namedtag->Inventory;
-         $nbt->Skin = new CompoundTag("Skin", ["Data" => new StringTag("Data", $player->getSkinData()), "Name" => new StringTag("Name", $player->getSkinId())]);
+         $inventoryTag = $player->namedtag->getListTag("Inventory");
+         assert($inventoryTag !== null);
+         $nbt->setTag(clone $inventoryTag);
+         $skinTag = $player->namedtag->getCompoundTag("Skin");
+         assert($skinTag !== null);
+         $nbt->setTag(clone $skinTag);
       }
       return $nbt;
    }
    public function makeSlapper(Player $player): void{
       if(isset($this->array["slapper"][$player->getName()]["start"])){
-         $nbt = $this->makeSlapperNBT("Human", $player, "gameevent start {player} ".$this->array["slapper"][$player->getName()]["start"]);
+         $name = $this->array["slapper"][$player->getName()]["start"];
+         $text = $this->getInfoStartEvent($name);
+         $nbt = $this->makeSlapperNBT("Human", $player, $text, "gameevent start {player} ".$name);
          $entity = Entity::createEntity("SlapperHuman", $player->getLevel(), $nbt);
-         $entity->setNameTag("{gameevent_start}");
+         $entity->setNameTag($text);
          $entity->setNameTagVisible(true);
          $entity->setNameTagAlwaysVisible(true);
-         $entity->namedtag->gameevent = new StringTag("gameevent", $entity->getNameTag());
+         $entity->namedtag->setString("slapper_GameEventStart".$name, $entity->getNameTag());
          $entity->spawnToAll();
-         $player->sendMessage($this->getPrefix()." §aหุ่นกิจกรรมได้สร้างสำเร็จ!");
+         $player->sendMessage($this->getPrefix()." ".$this->getLanguage()->getTranslate("makeslapper"));
          unset($this->array["slapper"][$player->getName()]);
       }
       if(isset($this->array["slapper"][$player->getName()]["award"])){
-         $nbt = $this->makeSlapperNBT("Human", $player, "gameevent award {player} ".$this->array["slapper"][$player->getName()]["award"]);
+         $name = $this->array["slapper"][$player->getName()]["award"];
+         $text = $this->getInfoAwardEvent($name);
+         $nbt = $this->makeSlapperNBT("Human", $player, $text, "gameevent award {player} ".$name);
          $entity = Entity::createEntity("SlapperHuman", $player->getLevel(), $nbt);
-         $entity->setNameTag("{gameevent_award}");
+         $entity->setNameTag($text);
          $entity->setNameTagVisible(true);
          $entity->setNameTagAlwaysVisible(true);
-         $entity->namedtag->gameevent = new StringTag("gameevent", $entity->getNameTag());
+         $entity->namedtag->setString("slapper_GameEventAward".$name, $entity->getNameTag());
          $entity->spawnToAll();
-         $player->sendMessage($this->getPrefix()." §aหุ่นกิจกรรมได้สร้างสำเร็จ!");
+         $player->sendMessage($this->getPrefix()." ".$this->getLanguage()->getTranslate("makeslapper"));
          unset($this->array["slapper"][$player->getName()]);
       }
    }
-   public function onSlapperUpdate(): void{
-      foreach($this->getServer()->getLevels() as $level){
-         foreach($level->getEntities() as $entity){                     
-            if(isset($entity->namedtag->gameevent)){
-               $tag = $this->formatText($entity->namedtag->gameevent->getValue());
-               $entity->setNameTag($tag);
-            }
-         }
-      }
-   }
-   public function formatText($text): string{
-      $text = str_replace("{gameevent_start}", $this->getInfoEvent(), $text);
-      $text = str_replace("{gameevent_award}", $this->getPrefix()."\nคลิกเพื่อรับรางวัล", $text);
-      return $text;
-   }
-   public function onSlapperCreation(SlapperCreationEvent $event) {
-      $entity = $event->getEntity();
-      $entity->namedtag->gameevent = new StringTag("gameevent", $entity->getNameTag());
-      $this->onSlapperUpdate();
-   }
-   public function onPlayerChat(PlayerChatEvent $event){
-      $player = $event->getPlayer();
-      $message = $event->getMessage();
-      if(isset($this->array["create"][$player->getName()])){
-         switch($this->array["create"][$player->getName()]["chatpage"]){
-            case "command-start":
-               $event->setCancelled(true);
-               $this->array["create"][$player->getName()]["command-start"] = $message;
-               $this->array["create"][$player->getName()]["chatpage"] = "command-award";
-               $player->sendMessage($this->getPrefix()." คำสั่งสตาร์ท §b".$message);
-               $player->sendMessage($this->getPrefix()." กรุณาพิมคำสั่งรางวัล");
-               break;
-            case "command-award":
-               $event->setCancelled(true);
-               $name = $this->array["create"][$player->getName()]["name"];
-               $time = $this->array["create"][$player->getName()]["time"];
-               $info = $this->array["create"][$player->getName()]["info"];
-               $infoAward = $this->array["create"][$player->getName()]["info-award"];
-               $cmdStart = $this->array["create"][$player->getName()]["command-start"];
-               $cmdAward = $message;
-               $player->sendMessage($this->getPrefix()." คำสั่งรางวัล §d".$cmdAward);
-               $this->createEvent($name, $time, $info, $infoAward, $cmdStart, $cmdAward);
-               $player->sendMessage($this->getPrefix()." §aกิจกรรม ".$name." ได้สร้างสำเร็จ!");
-               unset($this->array["create"][$player->getName()]);
-               break;
-            default:
-               $player->sendMessage($this->getPrefix()." §cกิจกรรม ".$this->array["create"][$player->getName()]["name"]." จะไม่ถูกสร้างเพราะไม่พบ ".$this->array["create"][$player->getName()]["chatpage"]);
-               unset($this->array["create"][$player->getName()]);
-               break;
-         }
-      }
-   }
-   public function onPlayerInteract(PlayerInteractEvent $event){
-      $player = $event->getPlayer();
-      $block = $event->getBlock();
-      $tile = $player->getLevel()->getTile($block);
-      $eventData = $this->getData();
-      $data = $eventData->getAll();
-      
-      if(isset($this->array["sign"][$player->getName()])){
-         if($tile instanceof Sign){
-            $tile->setText("[กิจกรรม]", "", "", "");
-            $player->sendMessage($this->getPrefix()." §aป้ายกิจกรรมได้สร้างสำเร็จ!");
-            unset($this->array["sign"][$player->getName()]);
-         }else{
-            $player->sendMessage($this->getPrefix()." §cกรุณาคลิกที่ป้าย");
-         }
-      }
-      if($tile instanceof Sign){
-         $text = $tile->getText();
-         if(TF::clean($text[0]) == "[กิจกรรม]"){
-            if(isset($data["event"]) && isset($data["event-present"])){
-               if(count($data["event"]) == 0){
-                  $player->sendMessage($this->getPrefix()." §cไม่มีกิจกรรม");
-                  return;
-               }
-               $event = $data["event-present"];
-               if(!isset($data["event"][$event])){
-                  $player->sendMessage($this->getPrefix()." §cไม่มีกิจกรรม");
-                  return;
-               }
-               if($data["event"][$event]["enabled"]){
-                  $this->onPlayerStartEvent($player, $event);
-               }else{
-                  $player->sendMessage($this->getPrefix()." §cกิจกรรมได้จบลงแล้ว");
-               }
-            }else{
-               $player->sendMessage($this->getPrefix()." §cไม่มีกิจกรรม");
-            }
-         }
-      }
-   }
-   public function getEvent(){
+   
+   
+   public function getEvent(): array{
       $eventData = $this->getData();
       $data = $eventData->getAll();
       return array_keys($data["event"]);
@@ -269,6 +230,11 @@ class GameEvent extends PluginBase implements Listener{
       $eventData = $this->getData();
       $data = $eventData->getAll();
       return isset($data["event"][$name]);
+   }
+   public function getCountEvent(): int{
+      $eventData = $this->getData();
+      $data = $eventData->getAll();
+      return count($data["event"]);
    }
    public function createEvent(string $name, int $time, string $info, string $infoAward, string $cmdStart, string $cmdAward): void{
       if(!$this->isPresentEvent()){
@@ -283,7 +249,20 @@ class GameEvent extends PluginBase implements Listener{
       $data["event"][$name]["info-award"] = $infoAward;
       $data["event"][$name]["command-start"] = $cmdStart;
       $data["event"][$name]["command-award"] = $cmdAward;
+      $data["event"][$name]["message-welcome"] = false;
       $data["event"][$name]["playerWin"] = [];
+      $eventData->setAll($data);
+      $eventData->save();
+   }
+   public function editEvent(string $name, int $time, string $info, string $infoAward, string $cmdStart, string $cmdAward): void{
+      $eventData = $this->getData();
+      $data = $eventData->getAll();
+      $data["event"][$name]["settime"] = $time;
+      $data["event"][$name]["time"] = $time;
+      $data["event"][$name]["info"] = $info;
+      $data["event"][$name]["info-award"] = $infoAward;
+      $data["event"][$name]["command-start"] = $cmdStart;
+      $data["event"][$name]["command-award"] = $cmdAward;
       $eventData->setAll($data);
       $eventData->save();
    }
@@ -293,6 +272,11 @@ class GameEvent extends PluginBase implements Listener{
       unset($data["event"][$name]);
       $eventData->setAll($data);
       $eventData->save();
+   }
+   public function getSetTimeEvent(string $name): int{
+      $eventData = $this->getData();
+      $data = $eventData->getAll();
+      return $data["event"][$name]["settime"];
    }
    public function getTimeEvent(string $name): int{
       $eventData = $this->getData();
@@ -342,56 +326,91 @@ class GameEvent extends PluginBase implements Listener{
       $eventData->setAll($data);
       $eventData->save();
    }
+   public function getMessageWelcomeEvent(string $name): bool{
+      $eventData = $this->getData();
+      $data = $eventData->getAll();
+      return $data["event"][$name]["message-welcome"];
+   }
+   public function setMessageWelcomeEvent(string $name, bool $enabled = false): void{
+      $eventData = $this->getData();
+      $data = $eventData->getAll();
+      $data["event"][$name]["message-welcome"] = $enabled;
+      $eventData->setAll($data);
+      $eventData->save();
+   }
    public function getEnabledEvent(string $name): bool{
       $eventData = $this->getData();
       $data = $eventData->getAll();
       return $data["event"][$name]["enabled"];
    }
    public function setEnabledEvent(string $name, bool $enabled = false): void{
-      $this->getServer()->broadcastMessage($this->getPrefix()." กิจกรรรม ".($enabled ? "§a".$name." ได้เริ่มแล้ว" : "§c".$name." ได้จบลงแล้ว"));
+      $this->getServer()->broadcastMessage($this->getPrefix()." ".$this->getLanguage()->getTranslate("event.title")." ".($enabled ? $this->getLanguage()->getTranslate("enabledevent.on", [$name]) : $this->getLanguage()->getTranslate("enabledevent.off", [$name])));
       $eventData = $this->getData();
       $data = $eventData->getAll();
       $data["event"][$name]["enabled"] = $enabled;
       $eventData->setAll($data);
       $eventData->save();  
    }
-   public function getInfoEvent(): string{
+   public function getInfoStartEvent(string $event): string{
       $eventData = $this->getData();
       $data = $eventData->getAll();
       if(isset($data["event"]) && isset($data["event-present"])){
          if(count($data["event"]) == 0){
-            return "ไม่มีกิจกรรม";
+            return $this->getLanguage()->getTranslate("event.without");
          }
-         $name = $data["event-present"];
+         $name = $event;
          if(!isset($data["event"][$name])){
-            return "ไม่มีกิจกรรม";
+            return $this->getLanguage()->getTranslate("event.notfound", [$name]);
          }
          if($data["event"][$name]["enabled"]){
-            $text = $this->getPrefix()."\n§fกิจกรรม ".$name."\nตอนนี้ §aเปิดอยู่\n§fเหลือเวลาอีก §e".$this->sendTime($data["event"][$name]["time"])."\n§fรางวัล §d".$data["event"][$name]["info-award"]; 
+            $text = $this->getPrefix().$this->getLanguage()->getTranslate("infostartevent.on", [$name, $data["event"][$name]["info"], $this->sendTime($data["event"][$name]["time"]), $data["event"][$name]["info-award"]]);
          }else{
-            $text = $this->getPrefix()."\n§fกิจกรรม ".$name."\nตอนนี้ §cปิดอยู่";
+            $text = $this->getPrefix().$this->getLanguage()->getTranslate("infostartevent.off", [$name]);
          }
          return $text;
       }else{
-         return "ไม่มีกิจกรรม";
+         return $this->getLanguage()->getTranslate("event.without");
+      }
+   }
+   public function getInfoAwardEvent(string $event): string{
+      $eventData = $this->getData();
+      $data = $eventData->getAll();
+      if(isset($data["event"]) && isset($data["event-present"])){
+         if(count($data["event"]) == 0){
+            return $this->getLanguage()->getTranslate("event.without");
+         }
+         $name = $event;
+         if(!isset($data["event"][$name])){
+            return $this->getLanguage()->getTranslate("event.notfound", [$name]);
+         }
+         if($data["event"][$name]["enabled"]){
+            $text = $this->getPrefix().$this->getLanguage()->getTranslate("infoawardevent.on", [$name, $data["event"][$name]["info-award"]]);
+         }else{
+            $text = $this->getPrefix().$this->getLanguage()->getTranslate("infoawardevent.off", [$name]);
+         }
+         return $text;
+      }else{
+         return $this->getLanguage()->getTranslate("event.without");
       }
    }
    public function onPlayerStartEvent(Player $player, string $event): void{
       $eventData = $this->getData();
       $data = $eventData->getAll();
       if(in_array(strtolower($player->getName()), $data["event"][$event]["playerWin"])){
-         $player->sendMessage($this->getPrefix()." §cคุณได้ทำกิจกรรมนี้แล้ว");
+         $player->sendMessage($this->getPrefix()." ".$this->getLanguage()->getTranslate("playerstartevent.error1"));
          return;
       }
       $command = str_replace("{player}", $player->getName(), $data["event"][$event]["command-start"]);
       $this->getServer()->dispatchCommand(new ConsoleCommandSender(), $command);
-      $player->sendMessage($this->getPrefix()." ยินดีต้อนรับเข้าสู่กิจกรรม ".$event." จะจบในอีก §b".$this->sendTime($data["event"][$event]["time"])." §fเมื่อคุณทำกิจกรรมสำเร็จคุณจะได้รับรางวัล §d".$data["event"][$event]["info-award"]);
+      if($this->getMessageWelcomeEvent($event)){
+         $player->sendMessage($this->getPrefix()." ".$this->getLanguage()->getTranslate("playerstartevent.welcome", [$event, $this->sendTime($data["event"][$event]["time"]), $data["event"][$event]["info-award"]]));
+      }
    }
    public function onPlayerAwardEvent(Player $player, string $event): void{
       $eventData = $this->getData();
       $data = $eventData->getAll();
       if(in_array(strtolower($player->getName()), $data["event"][$event]["playerWin"])){
-         $player->sendMessage($this->getPrefix()." §cคุณได้ทำกิจกรรมนี้แล้ว");
+         $player->sendMessage($this->getPrefix()." ".$this->getLanguage()->getTranslate("playerawardevent.error1"));
          return;
       }
       $data["event"][$event]["playerWin"][] = strtolower($player->getName());
@@ -399,7 +418,7 @@ class GameEvent extends PluginBase implements Listener{
       $eventData->save();
       $command = str_replace("{player}", $player->getName(), $data["event"][$event]["command-award"]);
       $this->getServer()->dispatchCommand(new ConsoleCommandSender(), $command);
-      $this->getServer()->broadcastMessage($this->getPrefix()." ผู้เล่น ".$player->getName()." ได้ทำกิจกรรม ".$event." สำเร็จและได้รับรางวัล §b".$data["event"][$event]["info-award"]);
+      $this->getServer()->broadcastMessage($this->getPrefix()." ".$this->getLanguage()->getTranslate("playerawardevent.complete", [$player->getName(), $event, $data["event"][$event]["info-award"]]));
    }
    
    public function onNextEvent(): void{
@@ -410,78 +429,5 @@ class GameEvent extends PluginBase implements Listener{
       $this->setEnabledEvent($event, true);
       $this->removeNextEvent();
    }
-   public function runSignEvent(): void{
-      $eventData = $this->getData();
-      $data = $eventData->getAll();
-      foreach($this->getServer()->getOnlinePlayers() as $player){
-         $level = $player->getLevel();
-         $tiles = $level->getTiles();
-         foreach($tiles as $sign){
-            if($sign instanceof Sign){
-               $text = $sign->getText();
-               if(TF::clean($text[0]) == "[กิจกรรม]"){
-                  if(isset($data["event"]) && isset($data["event-present"])){
-                     if(count($data["event"]) == 0){
-                        $sign->setText("§f[§eกิจกรรม§f]", "§cไม่มีกิจกรรม", "", "");
-                     }
-                     $event = $data["event-present"];
-                     if(!isset($data["event"][$event])){
-                        $sign->setText("§f[§eกิจกรรม§f]", "§cไม่มีกิจกรรม", "", "");
-                        return;
-                     }
-                     if($data["event"][$event]["enabled"]){
-                        $time = "§fเหลือ §a".$this->sendTime($data["event"][$event]["time"]);
-                     }else{
-                        $time = "§cกิจกรรมได้จบลงแล้ว";
-                     }
-                     $awardInfo = "§fรางวัล §b".$data["event"][$event]["info-award"];
-                     $eventStart = "§eคลิ้กเพื่อทำกิจกรรม";
-                     $sign->setText("§f[§eกิจกรรม§f]", $awardInfo, $time, $eventStart);
-                  }else{
-                     $sign->setText("§f[§eกิจกรรม§f]", "§cไม่มีกิจกรรม", "", "");
-                  }
-               }
-            }
-         }
-      }
-   }
-   public function runEvent(): void{
-      $eventData = $this->getData();
-      $data = $eventData->getAll();
-      if(isset($data["event"]) && isset($data["event-present"])){
-         if(count($data["event"]) == 0){
-            return;
-         }
-         $event = $data["event-present"];
-         if(!isset($data["event"][$event])){
-            return;
-         }
-         if(isset($data["event-next"])){
-            $eventNew = "§fและจะเริ่มกิจกรรมใหม่ §a".$data["event-next"];
-         }else{
-            $eventNew = "";
-         }
-         if($data["event"][$event]["enabled"]){
-            $data["event"][$event]["time"]--;
-            if($data["event"][$event]["time"] <= 10){
-               $this->getServer()->broadcastMessage($this->getPrefix()." กิจกรรม ".$event." จะจบลงในอีก §b".$this->sendTime($data["event"][$event]["time"])." ".$eventNew);
-            }
-            if($data["event"][$event]["time"] <= 0){
-               $data["event"][$event]["time"] = $data["event"][$event]["settime"];
-               $data["event"][$event]["playerWin"] = [];
-               $data["event"][$event]["enabled"] = false;
-               $this->getServer()->broadcastMessage($this->getPrefix()." กิจกรรม ".$event." §cได้จบลงแล้ว");
-               if(isset($data["event-next"])){
-                  $this->array["onNextEvent"] = true;
-               }
-            }
-            $eventData->setAll($data);
-            $eventData->save();
-         }
-         if(isset($this->array["onNextEvent"])){
-            $this->onNextEvent();
-            unset($this->array["onNextEvent"]);
-         }
-      }
-   }
+   
 }
