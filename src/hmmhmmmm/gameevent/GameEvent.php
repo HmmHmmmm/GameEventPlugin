@@ -8,7 +8,7 @@ use hmmhmmmm\gameevent\listener\EventListener;
 use hmmhmmmm\gameevent\scheduler\GameEventTask;
 use hmmhmmmm\gameevent\scheduler\SlapperUpdateTask;
 use hmmhmmmm\gameevent\ui\Form;
-use xenialdan\customui\API as FromAPI;
+use xenialdan\customui\API as XenialdanCustomUI;
 
 use pocketmine\Player;
 use pocketmine\block\Block;
@@ -86,7 +86,7 @@ class GameEvent extends PluginBase implements GameEventAPI{
       }else{
          $this->slapper = $this->getServer()->getPluginManager()->getPlugin("Slapper");
       }
-      if(!class_exists(FromAPI::class)){
+      if(!class_exists(XenialdanCustomUI::class)){
          $this->getLogger()->error($this->language->getTranslate("notfound.libraries", ["customui"]));
          $this->getServer()->getPluginManager()->disablePlugin($this);
          return;
