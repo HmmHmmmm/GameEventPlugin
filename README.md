@@ -34,7 +34,7 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 
 
 **How to use**<br>
-- ?
+- Example of event creation Parkour and BreakBlock https://youtu.be/d6lGZsFmefs
 
 **Command**<br>
 - `/gameevent` : open gui form
@@ -83,7 +83,7 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 
 
 **วิธีใช้งาน**<br>
-- ?
+- ตัวอย่างการสร้างกิจกรรม Parkour และ BreakBlock https://youtu.be/d6lGZsFmefs
 
 **Command**<br>
 - /gameevent : เปิด gui form
