@@ -23,14 +23,14 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 
 
 **Features of plugin**<br>
-- This plugin can create event of many forms Depends on the start command when creating the event What commands you will put For example, Trading event. You add trading commands to the start statement when creating an event And in trading orders(In successful trading)You must put a command. `gameevent award <PlayerName> <EventName>` In order to make players complete the event
-- RunEvent() Will run the present event count down the end And the event will reset all players who have previously performed this event And set a new time
+- This plugin can create event of many forms, Depends on the start command when creating the event, What commands you will put For example, Trading event, You add trading commands to the start statement when creating an event, And in trading orders, (In successful trading), You must put a command. `gameevent award <PlayerName> <EventName>` In order to make players complete the event
+- RunEvent() Will run the present event count down the end, And the event will reset all players who have previously performed this event, And set a new time
 - PresentEvent() Is the present event that needs to be run
 - NextEvent() Will start a new event after the present event runs to completion (If you set it)
 - PlayerStartEvent() Players start the event
 - PlayerAwardEvent() Players receive event rewards
 - have gui form
-- Have language thai, english (You can edit the language you don't like at, /resources/language)
+- Have language thai and english (You can edit the language you don't like at, /resources/language)
 
 
 **How to use**<br>
