@@ -23,7 +23,7 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 
 
 **Features of plugin**<br>
-- This plugin can create event of many forms Depends on the start command when creating the event What commands you will put For example, Trading event. You add trading commands to the start statement when creating an event And in trading orders(In successful trading)You must put a command. gameevent award <PlayerName> <EventName> In order to make players complete the event
+- This plugin can create event of many forms Depends on the start command when creating the event What commands you will put For example, Trading event. You add trading commands to the start statement when creating an event And in trading orders(In successful trading)You must put a command. `gameevent award <PlayerName> <EventName>` In order to make players complete the event
 - RunEvent() Will run the present event count down the end And the event will reset all players who have previously performed this event And set a new time
 - PresentEvent() Is the present event that needs to be run
 - NextEvent() Will start a new event after the present event runs to completion (If you set it)
@@ -37,21 +37,21 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 - ?
 
 **Command**<br>
-- /gameevent : open gui form
-- /gameevent create <NameTheEvent> <Time> <DescriptionText> <AwardMessage> : Create an Event
-- /gameevent list : See a list of all event.
-- /gameevent remove <EventName> : Delete event
-- /gameevent settime <EventName> <Time> : Set event times
-- /gameevent setpresent <EventName> : Set is the present event
-- /gameevent setnext <EventName> : Set is the next event
-- /gameevent enabled <EventName> on|off : Enabled/Disable of event
-- /gameevent start <PlayerName> <EventName> : Have players start the event
-- /gameevent award <PlayerName> <EventName> : Add players to receive event rewards.
-- /gameevent sign_start <EventName> : Create a sign to start an event
-- /gameevent sign_award <EventName> : Create a sign to award event
-- /gameevent slapper_start <EventName> : Create a slapper to start an event
-- /gameevent slapper_award <EventName> : Create a slapper to award event
-- /gameevent welcome <EventName> : Enabled/Disable Message welcome of event
+- `/gameevent` : open gui form
+- `/gameevent create <NameTheEvent> <Time> <DescriptionText> <AwardMessage>` : Create an Event
+- `/gameevent list` : See a list of all event.
+- `/gameevent remove <EventName>` : Delete event
+- `/gameevent settime <EventName> <Time>` : Set event times
+- `/gameevent setpresent <EventName>`: Set is the present event
+- `/gameevent setnext <EventName>` : Set is the next event
+- `/gameevent enabled <EventName> on|off` : Enabled/Disable of event
+- `/gameevent start <PlayerName> <EventName>` : Have players start the event
+- `/gameevent award <PlayerName> <EventName>` : Add players to receive event rewards.
+- `/gameevent sign_start <EventName>` : Create a sign to start an event
+- `/gameevent sign_award <EventName>` : Create a sign to award event
+- `/gameevent slapper_start <EventName>` : Create a slapper to start an event
+- `/gameevent slapper_award <EventName>` : Create a slapper to award event
+- `/gameevent welcome <EventName>` : Enabled/Disable Message welcome of event
 
 
 **Images**<br>
