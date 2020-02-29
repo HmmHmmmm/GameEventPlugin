@@ -13,8 +13,8 @@ class Language{
    
    private $langEnglish = [
       "reset" => false,
-      "notfound.plugin" => "§cThis plugin will not work. Please install the plugin %s",
-      "notfound.libraries" => "§cLibraries %s not found",
+      "notfound.plugin" => "§cThis plugin will not work, Please install the plugin %s",
+      "notfound.libraries" => "§cLibraries %s not found, Please download this plugin to as .phar",
       "plugininfo.name" => "§fName plugin %s",
       "plugininfo.version" => "§fVersion %s",
       "plugininfo.author" => "§fList of creators %s",
@@ -172,7 +172,7 @@ class Language{
    private $langThai = [
       "reset" => false,
       "notfound.plugin" => "§cปลั๊กนี้จะไม่ทำงาน กรุณาลงปลั๊กอิน %s",
-      "notfound.libraries" => "§cไม่พบไลบรารี %s",
+      "notfound.libraries" => "§cไม่พบไลบรารี %s กรุณาดาวน์โหลดปลั๊กอินนี้ให้เป็น .phar",
       "plugininfo.name" => "§fปลั๊กอินชื่อ %s",
       "plugininfo.version" => "§fเวอร์ชั่น %s",
       "plugininfo.author" => "§fรายชื่อผู้สร้าง %s",

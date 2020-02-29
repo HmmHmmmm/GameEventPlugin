@@ -5,7 +5,7 @@
 
 [Language Thai](#thai)
 
-This plugin uses Libraries customui No need to install that plugin
+This plugin uses Libraries `customui` No need to install that plugin
 Just load this plugin as .phar
 
 download GameEventPlugin.phar dev https://poggit.pmmp.io/ci/HmmHmmmm/GameEventPlugin/GameEventPlugin
@@ -23,14 +23,14 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 
 
 **Features of plugin**<br>
-- This plugin can create event of many forms, Depends on the start command when creating the event, What commands you will put For example, Trading event, You add trading commands to the start statement when creating an event, And in trading orders, (In successful trading), You must put a command. `gameevent award <PlayerName> <EventName>` In order to make players complete the event
+- This plugin can create event of many forms, Depends on the start command when creating the event, What commands you will put, For example, Trading event, You add trading commands to the start statement when creating an event, And in trading orders, (In successful trading), You must put a command. `gameevent award <PlayerName> <EventName>` In order to make players complete the event
 - RunEvent() Will run the present event count down the end, And the event will reset all players who have previously performed this event, And set a new time
 - PresentEvent() Is the present event that needs to be run
 - NextEvent() Will start a new event after the present event runs to completion (If you set it)
 - PlayerStartEvent() Players start the event
 - PlayerAwardEvent() Players receive event rewards
 - have gui form
-- Have language thai and english (You can edit the language you don't like at, /resources/language)
+- Have language thai and english (You can edit the language you don't like at, `/resources/language`)
 
 
 **How to use**<br>
@@ -79,28 +79,28 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 - PlayerStartEvent() ผู้เล่นเริ่มทำกิจกรรม
 - PlayerAwardEvent() ผู้เล่นรับรางวัลกิจกรรม
 - มี gui form
-- มีภาษา thai english (สามารถแก้ไขภาษาที่คุณไม่ชอบได้ที่ /resources/language)
+- มีภาษา thai english (สามารถแก้ไขภาษาที่คุณไม่ชอบได้ที่ `/resources/language`)
 
 
 **วิธีใช้งาน**<br>
 - ตัวอย่างการสร้างกิจกรรม Parkour และ BreakBlock https://youtu.be/d6lGZsFmefs
 
 **Command**<br>
-- /gameevent : เปิด gui form
-- /gameevent create <ชื่อกิจกรรม> <เวลา> <ข้อความอธิบาย> <ข้อความรางวัล> : สร้างกิจกรรม
-- /gameevent list : ดูรายชื่อกิจกรรม
-- /gameevent remove <ชื่อกิจกรรม> : ลบกิจกรรม
-- /gameevent settime <ชื่อกิจกรรม> <เวลา> : เช็ตเวลากิจกรรม
-- /gameevent setpresent <ชื่อกิจกรรม> : เช็ตเป็นกิจกรรมปัจจุบัน
-- /gameevent setnext <ชื่อกิจกรรม> : เช็ตเป็นกิจกรรมถัดไป
-- /gameevent enabled <ชื่อกิจกรรม> on|off : เปิด/ปิดกิจกรรม
-- /gameevent start <ชื่อผู้เล่น> <ชื่อกิจกรรม> : ให้ผู้เล่นเริ่มทำกิจกรรม
-- /gameevent award <ชื่อผู้เล่น> <ชื่อกิจกรรม> : เพิ่มผู้เล่นรับรางวัลกิจกรรม
-- /gameevent sign_start <ชื่อกิจกรรม> : สร้างป้ายเริ่มกิจกรรม
-- /gameevent sign_award <ชื่อกิจกรรม> : สร้างป้ายรับรางวัลกิจกรรม
-- /gameevent slapper_start <ชื่อกิจกรรม> : สร้างหุ่นเริ่มกิจกรรม
-- /gameevent slapper_award <ชื่อกิจกรรม> : สร้างหุ่นกิจกรรมรับรางวัล
-- /gameevent welcome <ชื่อกิจกรรม> : เปิด/ปิด ข้อความต้อนรับ
+- `/gameevent` : เปิด gui form
+- `/gameevent create <ชื่อกิจกรรม> <เวลา> <ข้อความอธิบาย> <ข้อความรางวัล>` : สร้างกิจกรรม
+- `/gameevent list` : ดูรายชื่อกิจกรรม
+- `/gameevent remove <ชื่อกิจกรรม>` : ลบกิจกรรม
+- `/gameevent settime <ชื่อกิจกรรม> <เวลา>` : เช็ตเวลากิจกรรม
+- `/gameevent setpresent <ชื่อกิจกรรม>` : เช็ตเป็นกิจกรรมปัจจุบัน
+- `/gameevent setnext <ชื่อกิจกรรม>` : เช็ตเป็นกิจกรรมถัดไป
+- `/gameevent enabled <ชื่อกิจกรรม> on|off` : เปิด/ปิดกิจกรรม
+- `/gameevent start <ชื่อผู้เล่น> <ชื่อกิจกรรม>` : ให้ผู้เล่นเริ่มทำกิจกรรม
+- `/gameevent award <ชื่อผู้เล่น> <ชื่อกิจกรรม>` : เพิ่มผู้เล่นรับรางวัลกิจกรรม
+- `/gameevent sign_start <ชื่อกิจกรรม>` : สร้างป้ายเริ่มกิจกรรม
+- `/gameevent sign_award <ชื่อกิจกรรม>` : สร้างป้ายรับรางวัลกิจกรรม
+- `/gameevent slapper_start <ชื่อกิจกรรม>` : สร้างหุ่นเริ่มกิจกรรม
+- `/gameevent slapper_award <ชื่อกิจกรรม>` : สร้างหุ่นกิจกรรมรับรางวัล
+- `/gameevent welcome <ชื่อกิจกรรม>` : เปิด/ปิด ข้อความต้อนรับ
 
 
 **Images**<br>
