@@ -23,7 +23,7 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 
 
 **Features of plugin**<br>
-- This plugin can create event of many forms, Depends on the start command when creating the event, What commands you will put, For example, Trading event, You add trading commands to the start statement when creating an event, And in trading orders, (In successful trading), You must put a command. `gameevent award <PlayerName> <EventName>` In order to make players complete the event
+- This plugin can create many forms of event. Depends on the start command
 - RunEvent() Will run the present event count down the end, And the event will reset all players who have previously performed this event, And set a new time
 - PresentEvent() Is the present event that needs to be run
 - NextEvent() Will start a new event after the present event runs to completion (If you set it)
@@ -72,7 +72,7 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 
 
 **คุณสมบัติของปลั๊กอิน**<br>
-- ปลั๊กอินนี้สามารถสร้างกิจกรรมได้หลายรูปแบบ ขึ้นอยู่กับคำสั่งสตาร์ทตอนที่สร้างกิจกรรม ว่าคุณจะใส่คำสั่งอะไรลงไป ตัวอย่างเช่น กิจกรรมแลกของ คุณก็ใส่คำสั่งแลกของลงไปในคำสั่งสตาร์ทตอนสร้างกิจกรรม และในคำสั่งแลกของ(ตอนแลกของสำเร็จ)คุณก็ต้องใส่คำสั่ง `gameevent award <ชื่อผู้เล่น> <ชื่อกิจกรรม>` เพื่อเป็นการทำให้ผู้เล่นทำกิจกรรมสำเร็จ
+- ปลั๊กอินนี้สามารถสร้างกิจกรรมได้หลายรูปแบบ ขึ้นอยู่กับคำสั่งสตาร์ทตอนที่สร้างกิจกรรม
 - RunEvent() จะรันกิจกรรมปัจจุบันถอยหลังจนจบ และกิจกรรมจะทำการ reset ผู้เล่นที่เคยทำกิจกรรมนี้ทั้งหมด และตั้งเวลาใหม่
 - PresentEvent() คือกิจกรรมปัจุบันที่ต้องการให้รัน
 - NextEvent() จะเป็นการเริ่มกิจกรรมใหม่จากกิจกรรมปัจุบันที่รันจนจบ (ถ้าคุณเซ็ตไว้)
