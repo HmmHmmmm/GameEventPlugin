@@ -1,14 +1,15 @@
 ## GameEventPlugin
 
+[![](https://poggit.pmmp.io/shield.state/GameEventPlugin)](https://poggit.pmmp.io/p/GameEventPlugin) [![](https://poggit.pmmp.io/shield.api/GameEventPlugin)](https://poggit.pmmp.io/p/GameEventPlugin) [![](https://poggit.pmmp.io/shield.dl.total/GameEventPlugin)](https://poggit.pmmp.io/p/GameEventPlugin)
+
 
 [Language English](#english)
 
 [Language Thai](#thai)
 
-This plugin uses Libraries `customui` No need to install that plugin
-Just load this plugin as .phar
 
-download GameEventPlugin.phar dev https://poggit.pmmp.io/ci/HmmHmmmm/GameEventPlugin/GameEventPlugin
+This plugin uses Libraries `CustomUI` No need to install that plugin
+Just load this plugin as .phar
 
 
 # English
@@ -23,7 +24,7 @@ Download the plugin Slapper [Click here](https://poggit.pmmp.io/p/slapper)
 
 
 **Features of plugin**<br>
-- This plugin can create many forms of event. Depends on the start command
+- This plugin can create many forms of event. Depends on `command start`
 - RunEvent() Will run the present event count down the end, And the event will reset all players who have previously performed this event, And set a new time
 - PresentEvent() Is the present event that needs to be run
 - NextEvent() Will start a new event after the present event runs to completion (If you set it)
